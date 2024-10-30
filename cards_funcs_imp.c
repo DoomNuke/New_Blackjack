@@ -28,15 +28,10 @@ Cards * Cards_Pop(Card_List *cards){
     //if(cards->length == 0) return NULL;{
         Cards *off = cards->head;
         cards->length--;
-        if(cards -> length == 0){
-            cards -> head = NULL;
-        }
-    else{
         cards->head = off->next;
-    }
-    off = NULL;
-    return off;
-    }
+        off->next = NULL;
+        return off;
+}
 //}
 
 
