@@ -11,16 +11,9 @@ void Cards_Init(Card_List *cards){
 
 //Completed the addition function
 void Cards_Add(Card_List *cards, Cards *m_card){
-    if(cards->length == 0)
-    {
-        cards->head = m_card;
-        cards->length++;
-    } 
-    else
-    {
-        cards->head->next = m_card;
-        cards->length++;
-    }
+    m_card->next = cards->head;
+    cards->head = m_card;
+    cards->length++;
 }
 
 //Drawing a card from the list of cards and after drawing it, setting the value to NULL 
