@@ -5,7 +5,6 @@
 #include <time.h>
 
 //Including all of the headers
-#include "cards_funcs_imp.c"
 #include "cards_funcs.h"
 #include "cards_l.h"
 #include "gamestate.h"
@@ -13,7 +12,6 @@
 //Defining ranks and suites
 #define RANKS (13)
 #define SUITES (4)
-#define Move(src, dst, indx) Cards_Add(dst, Card_Draw(src, indx))
 
 const char Ranks[RANKS][6] = 
 {
@@ -122,13 +120,13 @@ void New_Game(Gamestate *gameState){
     printf("Great! So you have $%u and the pot right now is $%u\n", gameState -> cash, gameState -> pot);
     
     printf("How much would you like to bet? in multiplications of 10's\n");
-    scanf("%hu", &bet);
+    scanf("%u", &bet);
     bet*=10;
     
     while(input == 0 || bet > gameState->pot || bet + gameState->pot < 0)
     {
     printf("Not the right amount, Please insert the value again\n");
-    input = scanf("%hu", &bet);
+    input = scanf("%u", &bet);
     bet *= 10;
     }
 
@@ -137,43 +135,35 @@ void New_Game(Gamestate *gameState){
  }
 
 
-void RoundStart(Gamestate *gameState){
-    uint8_t drawCard;
-    uint8_t  Value;
-
-    //Player hand draw
-    for(int i = 0; i < 2; i++){
-        drawCard = rand() % gameState->Deck.length;
-        Move(&gameState->Deck, &gameState->Player, 0);
-    }
-
-    //Dealer hand draw
-    for(int i = 0; i < 2; i++){
-        drawCard = rand() % gameState->Deck.length;
-        Move(&gameState->Deck, &gameState->Dealer, 0);
-    }
-}
 
 void HitOrStand(Gamestate* gameState)
 {
-    uint8_t CardPick = 0;
-    uint8_t Player_Hand = 0;
-    uint8_t Dealer_Hand = 0;
-
-    while(true){
+    uint8_t PlayersOverall;
+    uint8_t CPUsOveall;
+    
+    while(true)
+    {
         int a = fgetc(stdin);
-        scanf("Would you like to Hit or Stand?\n", a);
+        printf("Would you like to Hit or Stand?\n", a);
+        if(a == 10)
         {
-        if(a == 10){
-            CardPick = rand() % gameState->Deck.length;
+            PlayersOverall = rand() % gameState->Deck.length;
             //So you've chose to hit huh? SO HIT IT IS, Enter for HIT
             printf("HIT\n");
-            Move(&gameState -> Deck, &gameState -> Player, CardPick);
-            }
+            memmove(&gameState->Deck, &gameState->Player, gameState->Deck.length);
         }
+
+        PlayersOverall = printf(&gameState->Player);
+    }
+    if(PlayersOverall > 21){
+        printf("You've lost, Yikes\n");
+        return;
+    }
+    if(PlayersOverall == 21){
+        printf("JACKPOT, CONGRATULATIONS");
+        return;
     }
 }
-
 
 
 
@@ -184,41 +174,16 @@ void HitOrStand(Gamestate* gameState)
     if
 }*/
 
-
-
-
-
-uint8_t hand_show(Card_List *hand, bool show){
-    uint8_t total = 0;
-    uint8_t aces = 0;
-    uint8_t count = 0;
-
-    Cards *curr = hand->head;
-
-    while (curr != NULL){
-        uint8_t rank = curr->data >> 4;
-        uint8_t suitebyte = (uint8_t)curr->data << 4;
-        uint8_t suite = 0;
-        uint8_t value = rank+1;
     
     
-    while(suitebyte > 16)
-        {
-            suitebyte /= 2;
-            suite++;
-        }
-
-    if(show || count == 0){
-         printf("%s of %s (%2d)\n", RANKS[rank], SUITES[suite], value);
-    }
-    else //TODO: check why the fuck it doesn't work
-    {
-        printf("????\n");
-    }
-
-
+    
+    
+    
+    
+    
+    
     //Aces Sumup
-    if (total >= 10)
+    /*if (total >= 10)
     {
         aces = (value == 1);
     }
@@ -232,4 +197,4 @@ uint8_t hand_show(Card_List *hand, bool show){
         }
         total+=value;
     }
-}
+}*/

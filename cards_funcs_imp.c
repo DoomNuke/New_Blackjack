@@ -32,7 +32,7 @@ Cards * Cards_Pop(Card_List *cards){
             cards -> head = NULL;
         }
     else{
-        cards->head = off;
+        cards->head = off->next;
     }
     off = NULL;
     return off;
