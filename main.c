@@ -155,14 +155,6 @@ void HitOrStand(Gamestate* gameState)
 
         PlayersOverall = printf(&gameState->Player);
     }
-    if(PlayersOverall > 21){
-        printf("You've lost, Yikes\n");
-        return;
-    }
-    if(PlayersOverall == 21){
-        printf("JACKPOT, CONGRATULATIONS");
-        return;
-    }
 }
 
 
