@@ -94,10 +94,10 @@ for (int RanksIND = 0; RanksIND < RANKS; RanksIND++)
 void New_Game(Gamestate *gameState){
     char answer;
     int input = 0;
-    uint8_t bet = 0;
+    int bet = 0;
 
     //If broke
-     if (gameState -> cash < 10){
+     if (gameState -> cash < 10 && gameState->pot == 0){
         printf("Broke, Run it to play again :D\n");
         return;
     }
@@ -120,13 +120,13 @@ void New_Game(Gamestate *gameState){
     printf("Great! So you have $%u and the pot right now is $%u\n", gameState -> cash, gameState -> pot);
     
     printf("How much would you like to bet? in multiplications of 10's\n");
-    scanf("%u", &bet);
+    scanf("%d", &bet);
     bet*=10;
     
     while(input == 0 || bet > gameState->pot || bet + gameState->pot < 0)
     {
     printf("Not the right amount, Please insert the value again\n");
-    input = scanf("%u", &bet);
+    input = scanf("%d", &bet);
     bet *= 10;
     }
 
@@ -136,26 +136,27 @@ void New_Game(Gamestate *gameState){
 
 
 
-void HitOrStand(Gamestate* gameState)
+void RoundInit(Gamestate* gameState)
 {
-    uint8_t PlayersOverall;
-    uint8_t CPUsOveall;
-    
-    while(true)
+    uint8_t CardsDraw;
+    uint8_t Players_val;
+//Drawing cards for the player
+    for(int i = 0; i < 2; i++)
     {
-        int a = fgetc(stdin);
-        printf("Would you like to Hit or Stand?\n", a);
-        if(a == 10)
-        {
-            PlayersOverall = rand() % gameState->Deck.length;
-            //So you've chose to hit huh? SO HIT IT IS, Enter for HIT
-            printf("HIT\n");
-            memmove(&gameState->Deck, &gameState->Player, gameState->Deck.length);
-        }
-
-        PlayersOverall = printf(&gameState->Player);
+        CardsDraw = rand() % gameState->Deck.length;
+        Cards_Add(&gameState->Deck, 0), Cards_Draw(&gameState->Player.length);
     }
+
+    
+    for(int i = 0; i < 2; i++){
+        CardsDraw = rand() % gameState->Deck.length;
+        Cards_Add(&gameState->Deck, 0), Cards_Draw(&gameState->Dealer.length);
+    }
+    
+
+
 }
+//Drawing cards for the CPU
 
 
 

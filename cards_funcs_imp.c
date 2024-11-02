@@ -30,34 +30,23 @@ Cards * Cards_Pop(Card_List *cards){
 
 Cards * Card_Draw(Card_List *cards)
 {
-    if(cards -> head == 0) return NULL;
-        Cards *curr = NULL;
-        Cards *drawn = cards->head;
-    
 
-        for(int i = 0; i < sizeof(cards->length); i++)
+Cards *curr = NULL;        
+Cards *drawn = cards->head;
+    
+        for(int i = 0; i < cards->length; i++)
         {
             curr = drawn;
-            curr = curr->next;
-        }
-
-     cards->length--;
-
-        if(cards->length == 0)
-        {
-            cards->head = NULL;
-        }
-        else
-        {
-            if(drawn->next == NULL)
-            {
-                cards->head = drawn;    
-            }
+            curr->next = drawn;
             drawn->next = curr->next;
+            cards->head = drawn;   
+            cards->length--;
         }
+    
     drawn->next = NULL;
     return drawn;
 }
+
 
 void Cards_Free(Card_List *cards){
     while(cards->length > 0){
