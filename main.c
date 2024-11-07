@@ -29,8 +29,7 @@ const uint8_t Total_Cards = RANKS * SUITES; //52 Cards
 //Functions
 
 //Initialzing the game
-Gamestate init_game(void);
-
+void init_game(Gamestate * gameState);
 //Starting the game 
 void New_Game(Gamestate* gameState);
 //Initializing the rounds with the starting values, 2 cards for each player - player & CPU
@@ -48,7 +47,7 @@ int main()
 {
     //Gamestate Init
     Gamestate gameState;
-    gameState = init_game();
+    init_game(&gameState);
     
     //Randomizing new seeds each round
     srand(time(NULL));
@@ -76,16 +75,15 @@ int main()
 
 
 //Initializing all the members of the struct 
-Gamestate init_game(void)
+void init_game(Gamestate * gameState)
 {
-    Gamestate gameState;
 
-    gameState.cash = 1000;
-    gameState.pot = 0;
+    gameState->cash = 1000;
+    gameState->pot = 0;
 
-    Cards_Init(&gameState.Deck);
-    Cards_Init(&gameState.Player);
-    Cards_Init(&gameState.Dealer);
+    Cards_Init(&gameState->Deck);
+    Cards_Init(&gameState->Player);
+    Cards_Init(&gameState->Dealer);
 
 
 //Cards in hand
@@ -101,9 +99,8 @@ for (int RanksIND = 0; RanksIND < RANKS; RanksIND++)
             Hand_Card->data |= (1 << SuitIND);
             }
     
-    Cards_Add(&gameState.Deck, Hand_Card);
+    Cards_Add(&(gameState->Deck), Hand_Card);
     }
-    return gameState;
 }
 
 
