@@ -15,11 +15,11 @@
 
 const char Ranks[RANKS][6] =
     {
-        "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Prince", "Queen", "King"};
+        "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
 
 const char Suites[SUITES][8] =
     {
-        "Spades", "Diamonds", "Hearts", "Clubs"};
+        "Spades", "Diamond", "Hearts", "Clubs"};
 
 const uint8_t Total_Cards = RANKS * SUITES; // 52 Cards
 
@@ -118,7 +118,7 @@ void Pre_Game(Gamestate *gameState)
     else
 
     {
-        while (input == 0 || (answer != 'Y' && answer != 'y' && answer != 'N' && answer != 'n'))
+        while (input == EOF || (answer != 'Y' && answer != 'y' && answer != 'N' && answer != 'n'))
         {
             printf("Invalid answer, Please try again\n");
             scanf("%c", (&answer));
@@ -256,7 +256,6 @@ void HitOrStand(Gamestate *gameState)
     }
     else if (DealersValue > PlayersValue)
     {
-        printf("You've lost\n");
         gameState->outcomes = Outcome_Lose;
         return;
     }
@@ -358,14 +357,15 @@ int8_t showhands(Card_List *hand, bool showhand)
 
         if (showhand)
         {
-            printf("%s of %s\n\n", Ranks[rank], Suites[suit]);
+            printf(" - %s of %s", Ranks[rank], Suites[suit]);
         }
         else
         {
-            printf("? of ?\n\n");
+            printf(" - ? of ?");
         }
         curr = curr->next;
     }
+    printf("\n");
     if (showhand)
     {
         printf("Total is[%hu]\n", total);

@@ -6,7 +6,7 @@
 #include "cards_l.h"
 
 typedef enum Round_Outcomes{
-    Outcome_Lose = -2,
+    Outcome_Lose = 2,
     Outcome_Broke = -1,
     Outcome_Quit = 0,
     Outcome_Blackjack = 5,
