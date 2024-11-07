@@ -28,13 +28,13 @@ Cards * Cards_Pop(Card_List *cards){
 //}
 
 
-Cards * Card_Draw(Card_List *cards)
+Cards * Cards_Draw(Card_List *cards, uint8_t CardsElem)
 {
 
 Cards *curr = NULL;        
 Cards *drawn = cards->head;
     
-        for(int i = 0; i < cards->length; i++)
+        for(uint8_t i = 0; i < CardsElem; i++)
         {
             curr = drawn;
             curr->next = drawn;

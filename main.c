@@ -24,7 +24,6 @@ const char Suites[SUITES][8] =
 };
 
 
-
 const uint8_t Total_Cards = RANKS * SUITES; //52 Cards
 
 //Functions
@@ -33,8 +32,15 @@ const uint8_t Total_Cards = RANKS * SUITES; //52 Cards
 Gamestate init_game(void);
 
 //Starting the game 
-void GameStart(Gamestate *gameState);
-
+void New_Game(Gamestate* gameState);
+//Initializing the rounds with the starting values, 2 cards for each player - player & CPU
+void RoundInit(Gamestate* gameState);
+//The actual hit or stand
+void HitOrStand(Gamestate *gameState);
+//Outcome handler
+bool outcome(Gamestate *gameState);
+//A function that shows both player's and dealer's hands
+int8_t showhands(Card_List *hand, bool showhand);
 
 
 
@@ -46,13 +52,25 @@ int main()
     
     //Randomizing new seeds each round
     srand(time(NULL));
+
+    while(gameState.outcomes > -1){
+        New_Game(&gameState);
+        if(outcome(&gameState)) continue;
+        RoundInit(&gameState);
+
+        HitOrStand(&gameState);
+        outcome(&gameState);
+    }
     
+
 
     //Freeing all of the dynamic allocated memory
     Cards_Free(&gameState.Deck);
     Cards_Free(&gameState.Player);
     Cards_Free(&gameState.Dealer);
     
+
+    return 0;
 }
 
 
@@ -94,39 +112,44 @@ for (int RanksIND = 0; RanksIND < RANKS; RanksIND++)
 void New_Game(Gamestate *gameState){
     char answer;
     int input = 0;
-    int bet = 0;
+    uint16_t bet = 0;
 
     //If broke
      if (gameState -> cash < 10 && gameState->pot == 0){
         printf("Broke, Run it to play again :D\n");
+        gameState->outcomes = Outcome_Broke;
         return;
     }
 
     printf("Hello, Welcome to blackjack! would you like to start playing? y/n\n");
+    input = scanf("%c", &answer);
     
-    if(scanf("%c", &answer) == 'y' || (scanf("%c", &answer)) == 'Y'){
-        printf("Great! Let's start playing!\n");
-    }
-    if(scanf("%c", &answer) == 'n' || scanf("%c", &answer) == 'N'){
+    if(answer == 'n' || answer =='N'){
         printf(":( Okay then, see you next time\n");
+        gameState->outcomes = Outcome_Quit;
         return;
     }
-    while(scanf("%c", &answer) != 'n' || scanf("%c", &answer) !=  'N' || scanf("%c", &answer) !=  'y' || scanf("%c", &answer) !=  'Y')
+    
+    else
+    
+    {
+    while(input == 0 || answer != 'Y' && answer != 'y' && answer != 'N' && answer != 'n')
     {
         printf("Invalid answer, Please try again\n");
         scanf("%c", (&answer));    
+    }
     }
 
     printf("Great! So you have $%u and the pot right now is $%u\n", gameState -> cash, gameState -> pot);
     
     printf("How much would you like to bet? in multiplications of 10's\n");
-    scanf("%d", &bet);
+    input = scanf("%hu", &bet);
     bet*=10;
     
-    while(input == 0 || bet > gameState->pot || bet + gameState->pot < 0)
+    while(bet > gameState->pot || bet + gameState->pot < 0)
     {
     printf("Not the right amount, Please insert the value again\n");
-    input = scanf("%d", &bet);
+    input = scanf("%hu", &bet);
     bet *= 10;
     }
 
@@ -140,54 +163,204 @@ void RoundInit(Gamestate* gameState)
 {
     uint8_t CardsDraw;
     uint8_t Players_val;
-//Drawing cards for the player
+//Drawing cards for the players
     for(int i = 0; i < 2; i++)
     {
         CardsDraw = rand() % gameState->Deck.length;
-        Cards_Add(&gameState->Deck, 0), Cards_Draw(&gameState->Player.length);
+        Cards_Add(&gameState->Deck,(Cards_Draw(&gameState->Player, CardsDraw)));
+        Players_val = showhands(&gameState->Player, true);
     }
 
-    
+//Drawing cards for the CPU    
     for(int i = 0; i < 2; i++){
         CardsDraw = rand() % gameState->Deck.length;
-        Cards_Add(&gameState->Deck, 0), Cards_Draw(&gameState->Dealer.length);
+        Cards_Add(&gameState->Deck,(Cards_Draw(&gameState->Dealer,CardsDraw)));
+        Players_val = showhands(&gameState->Player, false);
     }
-    
 
+    //Showing the players hand
 
-}
-//Drawing cards for the CPU
-
-
-
-/* TODO: wtf is going on switch (outcome)
-{
-
-    case OutcomeWin:
-    if
-}*/
-
-    
-    
-    
-    
-    
-    
-    
-    
-    //Aces Sumup
-    /*if (total >= 10)
+    if(Players_val == 21){
+        printf("Congratulations!, Blackjack!\n");
+        gameState->outcomes = Outcome_Blackjack;
+        return;
+        //Round Loss Implementation prolly in enum
+    }
+    else if(Players_val > 21)
     {
-        aces = (value == 1);
+        printf("You've lost\n");
+        gameState->outcomes = Outcome_Lose;
+        return;
     }
-    else
+    
+}
+
+void HitOrStand(Gamestate *gameState){
+    char hit = 'h';
+    char stand = 's';
+    uint8_t cardpick = 0;
+    uint8_t PlayersValue = 0;
+    uint8_t DealersValue = 0;
+
+    while(true)
+    {
+        printf("Would you like to hit or stand?\n");
+        getchar();
+        
+        if(getchar() == hit)
         {
-            while(total < 13 && aces > 0)
-            {
-            total+=9;
-            aces--;
-            }
+            printf("Hit\n");
+            cardpick = rand() % gameState->Deck.length;
+            Cards_Add(&gameState->Deck,(Cards_Draw(&gameState->Player, cardpick)));
+            PlayersValue = showhands(&gameState->Player, 1);
+        
+        if (PlayersValue > 21)
+        {
+            gameState->outcomes = Outcome_Lose;
+            return;
         }
-        total+=value;
+
+        if (PlayersValue == 21)
+        {
+            gameState->outcomes = Outcome_Blackjack;
+            return;
+        }
+
+        DealersValue = showhands(&gameState->Dealer, 0);
+
+        }
+        else if(getchar() == stand){
+            break;
+        }
+        else
+        {
+            printf("Invalid, Please try putting a valid input\n");
+        }
     }
-}*/
+
+    while(true){
+        PlayersValue = showhands(&gameState->Player, 1);
+        printf("Dealer Draws a card\n");
+        DealersValue = showhands(&gameState->Dealer, 1);
+        if (DealersValue >= 17 || DealersValue > PlayersValue) break;
+        cardpick = rand() %gameState->Deck.length;
+         Cards_Add(&gameState->Deck,(Cards_Draw(&gameState->Dealer, cardpick)));
+    }
+    if(DealersValue > 21)
+    {
+        printf("Dealer lost and you've won!\n");
+        gameState->outcomes = Outcome_Win;
+        return;
+    }
+    else if (DealersValue > PlayersValue)
+    {
+        printf("You've lost\n");
+        gameState->outcomes = Outcome_Lose;
+        return;
+    }
+    else if(DealersValue == PlayersValue)
+    {
+        printf("Tie game\n");
+        gameState->outcomes = Outcome_Tie;
+        return;
+    }
+    gameState->outcomes = Outcome_Win;
+}
+
+
+bool outcome(Gamestate *gameState){
+    uint16_t winning = 0;
+
+    switch (gameState->outcomes){
+            case Outcome_Broke:
+            return 1;
+            case Outcome_Quit:
+            return 1;
+            case Outcome_Blackjack:
+                winning = gameState->pot * 2.5;
+                gameState->cash += winning;
+                gameState->pot = 0;
+                printf("You've won $%u", winning);
+                break;
+            case Outcome_Win:
+                winning = gameState->pot * 2;
+                gameState->cash += winning;
+                gameState->pot = 0;
+                printf("You've won $%u", winning);
+                break;
+            case Outcome_Lose:
+                printf("You've lost, Yikes\n");
+                gameState->pot = 0;
+                break;
+            case Outcome_Tie:
+                printf("No worries, it's a tie, the round continues\n");
+                break;
+            default:
+            printf("Unknown outcome %d", gameState->outcomes);
+            break;
+    }
+    if(gameState->outcomes > 0){
+        printf("Round is over\n");
+    }
+    return 1;
+}
+
+    
+    
+
+int8_t showhands(Card_List *hand,bool showhand){
+    
+    uint8_t total = 0;
+    uint8_t aces = 0;
+
+
+    Cards *curr = hand->head;
+
+    while(curr != NULL){
+
+uint8_t rank = curr->data >> 4;
+uint8_t suitb = curr->data << 4;
+uint8_t suit = 0;
+uint8_t value = rank+1;
+
+    if (total >= 10)
+        {
+            aces = (value == 1);
+        }
+        else
+            {
+                while(total < 13 && aces > 0)
+                {
+                total+=9;
+                aces--;
+                }
+            }
+total += value;
+
+while(suitb > 16)
+        {
+            suitb /= 2;
+            suit++;
+        }
+
+        
+        
+        if (showhand)
+        {
+            printf("%s of %s\n", Ranks[rank],Suites[suit]);
+        }
+        else
+        {
+            printf("? of ?\n");
+        }
+        if (showhand){
+            printf("Total is[%hu]\n", total);
+        }
+        else
+        {
+            printf("Total: ???\n");
+        }
+    }
+    
+    return total;
+}
