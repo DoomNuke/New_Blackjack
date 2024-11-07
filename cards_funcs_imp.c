@@ -34,13 +34,7 @@ if(cards == NULL || cards->head == NULL){
     printf("Drawing Card Failed: Null card list\n");
     return NULL;
 }
-  /*  pull out a card
-    2. find the previous card (if exists)
-    1. find the card I want to pull
-    3. attach the previous to the next one in the card list 
-    5. detach the connection to the card
-    4. decrease the length 
-    */
+
 Cards *target = NULL;
 if(CardsElem == 0){
     target = cards->head;
