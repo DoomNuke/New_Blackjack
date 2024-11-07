@@ -8,7 +8,6 @@
 
 void Cards_Init(Card_List *cards);//Initializing the cards
 void Cards_Add(Card_List *cards, Cards *m_card);//Adding the Cards
-Cards * Cards_Pop(Card_List *cards); //Removing the Cards
 Cards * Cards_Draw(Card_List *cards, uint8_t CardsElem); //Removing the Cards
 void Cards_Free(Card_List *cards);//Freeing the Cards
 

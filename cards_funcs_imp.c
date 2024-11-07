@@ -16,16 +16,6 @@ void Cards_Add(Card_List *cards, Cards *m_card){
     cards->length++;
 }
 
-//Drawing a card from the list of cards and after drawing it, setting the value to NULL 
-Cards * Cards_Pop(Card_List *cards){
-    //if(cards->length == 0) return NULL;{
-        Cards *off = cards->head;
-        cards->length--;
-        cards->head = off->next;
-        off->next = NULL;
-        return off;
-}
-//}
 
 
 Cards * Cards_Draw(Card_List *cards, uint8_t CardsElem)
@@ -57,7 +47,7 @@ else{
 
 void Cards_Free(Card_List *cards){
     while(cards->length > 0){
-        free(Cards_Pop(cards));
+        free(Cards_Draw(cards, 0));
     }
 }
 

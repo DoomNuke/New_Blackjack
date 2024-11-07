@@ -31,6 +31,8 @@ void init_game(Gamestate *gameState);
 void Pre_Game(Gamestate *gameState);
 // Initializing the rounds with the starting values, 2 cards for each player - player & CPU
 void RoundInit(Gamestate *gameState);
+//Resetting the cards back
+void ResetDeck(Gamestate *gameState);
 // The actual hit or stand
 void HitOrStand(Gamestate *gameState);
 // Outcome handler
@@ -53,6 +55,8 @@ int main()
         if (outcome(&gameState))
             continue;
         RoundInit(&gameState);
+        if (outcome(&gameState))
+            continue;
 
         HitOrStand(&gameState);
         outcome(&gameState);
@@ -151,6 +155,7 @@ void RoundInit(Gamestate *gameState)
     uint8_t DrawInd;
     uint8_t Players_val;
     uint8_t Dealers_val;
+    ResetDeck(gameState);
     // Drawing cards for the players
     for (int i = 0; i < 2; i++)
     {
@@ -189,9 +194,19 @@ void RoundInit(Gamestate *gameState)
     }
     else if (Players_val > 21 || Dealers_val == 21)
     {
-        printf("You've lost\n");
         gameState->outcomes = Outcome_Lose;
         return;
+    }
+}
+
+void ResetDeck(Gamestate *gameState)
+{
+     while(gameState->Player.length > 0){
+        Cards_Add(&gameState->Deck, Cards_Draw(&gameState->Player, 0));
+    }
+    while (gameState->Dealer.length > 0)
+    {
+        Cards_Add(&gameState->Deck, Cards_Draw(&gameState->Dealer, 0));
     }
 }
 
@@ -335,18 +350,9 @@ int8_t showhands(Card_List *hand, bool showhand)
         uint8_t suit = 0;
         uint8_t value = rank + 1;
 
-        if (total >= 10)
-        {
-            aces = (value == 1);
-        }
-        else
-        {
-            while (total < 13 && aces > 0)
-            {
-                total += 9;
-                aces--;
-            }
-        }
+        
+        aces += (value == 1);
+        
         total += value;
 
         while (suitb > 16)
@@ -365,6 +371,11 @@ int8_t showhands(Card_List *hand, bool showhand)
         }
         curr = curr->next;
     }
+      while (total < 13 && aces > 0)
+            {
+                total += 9;
+                aces--;
+            }
     printf("\n");
     if (showhand)
     {
