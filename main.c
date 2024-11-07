@@ -92,14 +92,13 @@ Cards *Hand_Card = NULL;
 for (int RanksIND = 0; RanksIND < RANKS; RanksIND++)
     {
         for (int SuitIND = 0; SuitIND< SUITES; SuitIND++)
-            {
+            {    
             Hand_Card = malloc(sizeof(Cards));
             Hand_Card->data = RanksIND;
             Hand_Card->data <<=4;
             Hand_Card->data |= (1 << SuitIND);
+            Cards_Add(&(gameState->Deck), Hand_Card);
             }
-    
-    Cards_Add(&(gameState->Deck), Hand_Card);
     }
 }
 
