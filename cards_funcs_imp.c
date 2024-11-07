@@ -11,6 +11,10 @@ void Cards_Init(Card_List *cards){
 
 //Completed the addition function
 void Cards_Add(Card_List *cards, Cards *m_card){
+    if(cards == NULL || cards->head == NULL){
+    printf("Adding Card Failed: Null card list\n");
+    return;
+}
     m_card->next = cards->head;
     cards->head = m_card;
     cards->length++;
@@ -30,7 +34,10 @@ Cards * Cards_Pop(Card_List *cards){
 
 Cards * Cards_Draw(Card_List *cards, uint8_t CardsElem)
 {
-
+if(cards == NULL || cards->head == NULL){
+    printf("Drawing Card Failed: Null card list\n");
+    return NULL;
+}
 Cards *curr = NULL;        
 Cards *drawn = cards->head;
     

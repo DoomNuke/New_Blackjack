@@ -9,9 +9,10 @@ typedef enum Round_Outcomes{
     Outcome_Lose = -2,
     Outcome_Broke = -1,
     Outcome_Quit = 0,
-    Outcome_Blackjack = 1,
-    Outcome_Win = 2,
-    Outcome_Tie = 3
+    Outcome_Blackjack = 5,
+    Outcome_Win = 4,
+    Outcome_Tie = 3,
+    Outcome_TBD = 1
 }Outcomes;
 
 typedef struct Gamestate{

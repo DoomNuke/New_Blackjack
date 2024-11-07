@@ -124,7 +124,7 @@ void New_Game(Gamestate *gameState){
     printf("Hello, Welcome to blackjack! would you like to start playing? y/n\n");
     input = scanf("%c", &answer);
     
-    if(answer == 'n' || answer =='N'){
+    if(answer == 'n' || answer == 'N'){
         printf(":( Okay then, see you next time\n");
         gameState->outcomes = Outcome_Quit;
         return;
@@ -133,7 +133,7 @@ void New_Game(Gamestate *gameState){
     else
     
     {
-    while(input == 0 || answer != 'Y' && answer != 'y' && answer != 'N' && answer != 'n')
+    while(input == 0 || (answer != 'Y' && answer != 'y' && answer != 'N' && answer != 'n'))
     {
         printf("Invalid answer, Please try again\n");
         scanf("%c", (&answer));    
@@ -146,7 +146,7 @@ void New_Game(Gamestate *gameState){
     input = scanf("%hu", &bet);
     bet*=10;
     
-    while(bet > gameState->pot || bet + gameState->pot < 0)
+    while(bet < 10 && bet + gameState->pot < 0)
     {
     printf("Not the right amount, Please insert the value again\n");
     input = scanf("%hu", &bet);
@@ -155,6 +155,8 @@ void New_Game(Gamestate *gameState){
 
     gameState->cash -= bet;
     gameState->pot += bet;
+
+    gameState->outcomes=Outcome_TBD;
  }
 
 
@@ -166,6 +168,10 @@ void RoundInit(Gamestate* gameState)
 //Drawing cards for the players
     for(int i = 0; i < 2; i++)
     {
+        if(gameState->Deck.length == 0){
+            printf("Couldn't Add The Cards To The Player: Deck Empty\n");
+            return;
+        }
         CardsDraw = rand() % gameState->Deck.length;
         Cards_Add(&gameState->Deck,(Cards_Draw(&gameState->Player, CardsDraw)));
         Players_val = showhands(&gameState->Player, true);
@@ -173,6 +179,10 @@ void RoundInit(Gamestate* gameState)
 
 //Drawing cards for the CPU    
     for(int i = 0; i < 2; i++){
+         if(gameState->Deck.length == 0){
+            printf("Couldn't Add The Cards To The Dealer: Deck Empty\n");
+            return;
+        }
         CardsDraw = rand() % gameState->Deck.length;
         Cards_Add(&gameState->Deck,(Cards_Draw(&gameState->Dealer,CardsDraw)));
         Players_val = showhands(&gameState->Player, false);
@@ -196,8 +206,8 @@ void RoundInit(Gamestate* gameState)
 }
 
 void HitOrStand(Gamestate *gameState){
-    char hit = 'h';
-    char stand = 's';
+    const char hit = 'h';
+    const char stand = 's';
     uint8_t cardpick = 0;
     uint8_t PlayersValue = 0;
     uint8_t DealersValue = 0;
@@ -209,6 +219,10 @@ void HitOrStand(Gamestate *gameState){
         
         if(getchar() == hit)
         {
+             if(gameState->Deck.length == 0){
+            printf("Couldn't Add The Cards To The Player: Deck Empty\n");
+            return;
+        }
             printf("Hit\n");
             cardpick = rand() % gameState->Deck.length;
             Cards_Add(&gameState->Deck,(Cards_Draw(&gameState->Player, cardpick)));
@@ -273,9 +287,9 @@ bool outcome(Gamestate *gameState){
 
     switch (gameState->outcomes){
             case Outcome_Broke:
-            return 1;
+                
             case Outcome_Quit:
-            return 1;
+
             case Outcome_Blackjack:
                 winning = gameState->pot * 2.5;
                 gameState->cash += winning;
@@ -295,13 +309,13 @@ bool outcome(Gamestate *gameState){
             case Outcome_Tie:
                 printf("No worries, it's a tie, the round continues\n");
                 break;
+            case Outcome_TBD: //Undetermined 
+                return 0;
+
             default:
-            printf("Unknown outcome %d", gameState->outcomes);
-            break;
+                break;
     }
-    if(gameState->outcomes > 0){
-        printf("Round is over\n");
-    }
+    printf("Round is over\n");
     return 1;
 }
 
