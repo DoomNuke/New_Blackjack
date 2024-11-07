@@ -93,7 +93,6 @@ void init_game(Gamestate *gameState)
     }
 }
 
-
 void Pre_Game(Gamestate *gameState)
 {
     char answer;
@@ -129,7 +128,7 @@ void Pre_Game(Gamestate *gameState)
     printf("Great! So you have $%u and the pot right now is $%u\n", gameState->cash, gameState->pot);
 
     printf("How much would you like to bet? in multiplications of 10's\n");
-    input = scanf("%d", &bet);
+    input = scanf("%hu", &bet);
     bet *= 10;
 
     while (bet < 10 && bet + gameState->pot < 0)
@@ -142,7 +141,7 @@ void Pre_Game(Gamestate *gameState)
     gameState->cash -= bet;
     gameState->pot += bet;
 
-    printf("Your bet is %d", &bet);
+    printf("Your bet is %hu\n\n", bet);
 
     gameState->outcomes = Outcome_TBD;
 }
@@ -162,7 +161,6 @@ void RoundInit(Gamestate *gameState)
         }
         DrawInd = rand() % gameState->Deck.length;
         Cards_Add(&gameState->Player, (Cards_Draw(&gameState->Deck, DrawInd)));
-
     }
     Players_val = showhands(&gameState->Player, true);
 
@@ -199,53 +197,45 @@ void RoundInit(Gamestate *gameState)
 
 void HitOrStand(Gamestate *gameState)
 {
-    const char hit = 'h';
-    const char stand = 's';
+    const char *hit = "hit";
+    const char *stand = "stand";
+    char input[6];
     uint8_t cardpick = 0;
     uint8_t PlayersValue = 0;
     uint8_t DealersValue = 0;
 
-    printf("Would you like to hit or stand?\n");
-    getchar();
-    
     while (true)
     {
-
-        if (getchar() == hit)
+        printf("Would you like to hit or stand?\n");
+       scanf("%6s", &input);
+        if  (0 == strcmp(hit, input))
         {
             if (gameState->Deck.length == 0)
             {
                 printf("Couldn't Add The Cards To The Player: Deck Empty\n");
                 return;
             }
-            printf("Hit\n");
             cardpick = rand() % gameState->Deck.length;
             Cards_Add(&gameState->Player, (Cards_Draw(&gameState->Deck, cardpick)));
             PlayersValue = showhands(&gameState->Player, 1);
             DealersValue = showhands(&gameState->Dealer, 0);
         }
 
-          if (PlayersValue > 21)
-            {
-                gameState->outcomes = Outcome_Lose;
-                return;
-            }
+        if (PlayersValue > 21)
+        {
+            gameState->outcomes = Outcome_Lose;
+            return;
+        }
 
-            if (PlayersValue == 21)
-            {
-                gameState->outcomes = Outcome_Blackjack;
-                return;
-            }
-        else if (getchar() == stand)
+        if (PlayersValue == 21)
+        {
+            gameState->outcomes = Outcome_Blackjack;
+            return;
+        }
+        else if (0 == strcmp(stand, input))
         {
             break;
         }
-        
-       /* else(getchar() != stand && getchar() != hit)
-        {
-            printf("Invalid, Please try putting a valid input\n");
-            getchar();
-        }*/
     }
 
     while (true)
@@ -285,42 +275,42 @@ bool outcome(Gamestate *gameState)
     switch (gameState->outcomes)
     {
     case Outcome_Broke:
-    
-    printf("Broke, Run it to play again :D\n");
-    break;
+
+        printf("Broke, Run it to play again :D\n");
+        break;
 
     case Outcome_Quit:
-    
-    printf(":( Okay then, see you next time\n");
-    break;
+
+        printf(":( Okay then, see you next time\n");
+        break;
 
     case Outcome_Blackjack:
-        
+
         winning = gameState->pot * 2.5;
         gameState->cash += winning;
         gameState->pot = 0;
         printf("You've won $%u\n\n", winning);
         break;
-    
+
     case Outcome_Win:
-        
+
         winning = gameState->pot * 2;
         gameState->cash += winning;
         gameState->pot = 0;
         printf("You've won $%u\n\n", winning);
         break;
-    
+
     case Outcome_Lose:
-        
+
         printf("You've lost, Yikes\n\n");
         gameState->pot = 0;
         break;
-    
+
     case Outcome_Tie:
-        
+
         printf("No worries, it's a tie, the round continues\n\n");
         break;
-    
+
     case Outcome_TBD: // Undetermined
         return 0;
 
