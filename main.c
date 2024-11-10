@@ -41,6 +41,8 @@ void HitOrStand(Gamestate *gameState);
 bool outcome(Gamestate *gameState);
 // A function that shows both player's and dealer's hands
 int8_t showhands(Card_List *hand, bool showhand);
+//Clearing the buffer 
+void empty_stdin(void);
 
 //Additional Note, Wanted to include a delay func but since it works differently on Linux, decided not to
 
@@ -116,6 +118,7 @@ void Pre_Game(Gamestate *gameState)
 
     printf("Hello, Welcome to blackjack! would you like to start playing? y/n\n");
     input = scanf("%c", &answer);
+    empty_stdin();
 
 
     if (answer == 'n' || answer == 'N')
@@ -131,6 +134,7 @@ void Pre_Game(Gamestate *gameState)
         {
             printf("Invalid answer, Please try again\n");
             scanf("%c", (&answer));
+            empty_stdin();
         }
     }
 
@@ -141,11 +145,12 @@ void Pre_Game(Gamestate *gameState)
      bet *= 10;
 
 
-    while (input == 0 || (bet < 10 && bet + gameState->pot <= 0))
+    while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash)
     {
         printf("Not the right amount, Please insert the value again\n");
         input = scanf("%hu", &bet);
         bet *= 10;
+        empty_stdin();
     }
 
     gameState->cash -= bet;
@@ -263,6 +268,7 @@ void HitOrStand(Gamestate *gameState)
             {
                 printf("Invalid answer, you need to type in 'hit' or 'stand' \n");
                 scanf("%s", input);
+                empty_stdin();
             }
         }
     }
@@ -401,4 +407,10 @@ int8_t showhands(Card_List *hand, bool showhand)
     }
 
     return total;
+}
+
+void empty_stdin(void)
+{
+    int c = getchar();
+    while (c != '\n' && c != EOF) c = getchar();
 }
