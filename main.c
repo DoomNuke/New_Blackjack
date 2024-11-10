@@ -23,6 +23,8 @@ const char Suites[SUITES][8] =
 
 const uint8_t Total_Cards = RANKS * SUITES; // 52 Cards
 
+const char input;
+
 // Functions
 
 // Initialzing the game
@@ -115,6 +117,7 @@ void Pre_Game(Gamestate *gameState)
     printf("Hello, Welcome to blackjack! would you like to start playing? y/n\n");
     input = scanf("%c", &answer);
 
+
     if (answer == 'n' || answer == 'N')
     {
         gameState->outcomes = Outcome_Quit;
@@ -135,9 +138,10 @@ void Pre_Game(Gamestate *gameState)
 
     printf("How much would you like to bet? in multiplications of 10's\n");
     input = scanf("%hu", &bet);
-    bet *= 10;
+     bet *= 10;
 
-    while (bet < 10 && bet + gameState->pot < 0)
+
+    while (input == 0 || (bet < 10 && bet + gameState->pot <= 0))
     {
         printf("Not the right amount, Please insert the value again\n");
         input = scanf("%hu", &bet);
@@ -224,7 +228,7 @@ void HitOrStand(Gamestate *gameState)
     while (true)
     {
         printf("Would you like to hit or stand?\n");
-       scanf("%s", &input);
+       scanf("%s", input);
         if  (0 == strcmp(hit, input))
         {
             if (gameState->Deck.length == 0)
@@ -255,9 +259,10 @@ void HitOrStand(Gamestate *gameState)
         }
 
         else{
-            while(scanf("%s", &input) != strcmp(hit, input) || scanf("%s", &input) != strcmp(stand, input)){
+            while(scanf("%s", input) != strcmp(hit, input) || scanf("%s", input) != strcmp(stand, input))
+            {
                 printf("Invalid answer, you need to type in 'hit' or 'stand' \n");
-                scanf("%s", &input);
+                scanf("%s", input);
             }
         }
     }
