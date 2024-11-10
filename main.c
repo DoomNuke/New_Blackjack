@@ -40,6 +40,8 @@ bool outcome(Gamestate *gameState);
 // A function that shows both player's and dealer's hands
 int8_t showhands(Card_List *hand, bool showhand);
 
+//Additional Note, Wanted to include a delay func but since it works differently on Linux, decided not to
+
 int main()
 {
     // Gamestate Init
@@ -222,7 +224,7 @@ void HitOrStand(Gamestate *gameState)
     while (true)
     {
         printf("Would you like to hit or stand?\n");
-       scanf("%6s", &input);
+       scanf("%s", &input);
         if  (0 == strcmp(hit, input))
         {
             if (gameState->Deck.length == 0)
@@ -242,7 +244,7 @@ void HitOrStand(Gamestate *gameState)
             return;
         }
 
-        if (PlayersValue == 21)
+        if (PlayersValue == 21 || DealersValue > 21)
         {
             gameState->outcomes = Outcome_Blackjack;
             return;
@@ -250,6 +252,13 @@ void HitOrStand(Gamestate *gameState)
         else if (0 == strcmp(stand, input))
         {
             break;
+        }
+
+        else{
+            while(scanf("%s", &input) != strcmp(hit, input) || scanf("%s", &input) != strcmp(stand, input)){
+                printf("Invalid answer, you need to type in 'hit' or 'stand' \n");
+                scanf("%s", &input);
+            }
         }
     }
 
