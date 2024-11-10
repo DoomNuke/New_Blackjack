@@ -110,7 +110,7 @@ void Pre_Game(Gamestate *gameState)
     // If broke
     if (gameState->cash < 10 && gameState->pot == 0)
     {
-        gameState->outcomes = Outcome_Broke;
+        gameState->outcomes = Broke;
         return;
     }
 
@@ -120,7 +120,7 @@ void Pre_Game(Gamestate *gameState)
 
     if (answer == 'n' || answer == 'N')
     {
-        gameState->outcomes = Outcome_Quit;
+        gameState->outcomes = Quit;
         return;
     }
 
@@ -153,7 +153,7 @@ void Pre_Game(Gamestate *gameState)
 
     printf("Your bet is %hu\n\n", bet);
 
-    gameState->outcomes = Outcome_TBD;
+    gameState->outcomes = TBD;
 }
 
 void RoundInit(Gamestate *gameState)
@@ -194,7 +194,7 @@ void RoundInit(Gamestate *gameState)
     if (Players_val == 21)
     {
         printf("Congratulations!, Blackjack!\n");
-        gameState->outcomes = Outcome_Blackjack;
+        gameState->outcomes = Blackjack;
         return;
         // Round Loss Implementation prolly in enum
     }
@@ -250,7 +250,7 @@ void HitOrStand(Gamestate *gameState)
 
         if (PlayersValue == 21 || DealersValue > 21)
         {
-            gameState->outcomes = Outcome_Blackjack;
+            gameState->outcomes = Blackjack;
             return;
         }
         else if (0 == strcmp(stand, input))
@@ -302,17 +302,17 @@ bool outcome(Gamestate *gameState)
 
     switch (gameState->outcomes)
     {
-    case Outcome_Broke:
+    case Broke:
 
         printf("Broke, Run it to play again :D\n");
         break;
 
-    case Outcome_Quit:
+    case Quit:
 
         printf(":( Okay then, see you next time\n");
         break;
 
-    case Outcome_Blackjack:
+    case Blackjack:
 
         winning = gameState->pot * 2.5;
         gameState->cash += winning;
@@ -339,7 +339,7 @@ bool outcome(Gamestate *gameState)
         printf("No worries, it's a tie, the round continues\n\n");
         break;
 
-    case Outcome_TBD: // Undetermined
+    case TBD: // Undetermined
         return 0;
 
     default:

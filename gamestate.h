@@ -7,12 +7,12 @@
 
 typedef enum Round_Outcomes{
     Lose = 2,
-    Outcome_Broke = -1,
-    Outcome_Quit = 0,
-    Outcome_Blackjack = 5,
+    Broke = -1,
+    Quit = 0,
+    Blackjack = 5,
     Win = 4,
     Tie = 3,
-    Outcome_TBD = 1
+    TBD = 1 //To be decided/Undetermined
 }Outcomes;
 
 typedef struct Gamestate{
