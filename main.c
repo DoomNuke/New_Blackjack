@@ -200,7 +200,7 @@ void RoundInit(Gamestate *gameState)
     }
     else if (Players_val > 21 || Dealers_val == 21)
     {
-        gameState->outcomes = Outcome_Lose;
+        gameState->outcomes = Lose;
         return;
     }
 }
@@ -244,7 +244,7 @@ void HitOrStand(Gamestate *gameState)
 
         if (PlayersValue > 21)
         {
-            gameState->outcomes = Outcome_Lose;
+            gameState->outcomes = Lose;
             return;
         }
 
@@ -280,20 +280,20 @@ void HitOrStand(Gamestate *gameState)
     if (DealersValue > 21)
     {
         printf("Dealer lost and you've won!\n");
-        gameState->outcomes = Outcome_Win;
+        gameState->outcomes = Win;
         return;
     }
     else if (DealersValue > PlayersValue)
     {
-        gameState->outcomes = Outcome_Lose;
+        gameState->outcomes = Lose;
         return;
     }
     else if (DealersValue == PlayersValue)
     {
-        gameState->outcomes = Outcome_Tie;
+        gameState->outcomes = Tie;
         return;
     }
-    gameState->outcomes = Outcome_Win;
+    gameState->outcomes = Win;
 }
 
 bool outcome(Gamestate *gameState)
@@ -320,7 +320,7 @@ bool outcome(Gamestate *gameState)
         printf("You've won $%u\n\n", winning);
         break;
 
-    case Outcome_Win:
+    case Win:
 
         winning = gameState->pot * 2;
         gameState->cash += winning;
@@ -328,13 +328,13 @@ bool outcome(Gamestate *gameState)
         printf("You've won $%u\n\n", winning);
         break;
 
-    case Outcome_Lose:
+    case Lose:
 
         printf("You've lost, Yikes\n\n");
         gameState->pot = 0;
         break;
 
-    case Outcome_Tie:
+    case Tie:
 
         printf("No worries, it's a tie, the round continues\n\n");
         break;
