@@ -21,6 +21,8 @@ const char Suites[SUITES][8] =
     {
         "Spades", "Diamond", "Hearts", "Clubs"};
 
+
+
 const uint8_t Total_Cards = RANKS * SUITES; // 52 Cards
 
 const char input;
@@ -105,7 +107,9 @@ void init_game(Gamestate *gameState)
 
 void Pre_Game(Gamestate *gameState)
 {
-    char answer;
+    char answer[6];
+    const char *yesans = "yes";
+    const char *noans = "no";
     int input = 0;
     uint16_t bet = 0;
 
@@ -116,36 +120,18 @@ void Pre_Game(Gamestate *gameState)
         return;
     }
 
-    printf("Hello, Welcome to blackjack! would you like to start playing? y/n\n");
-    input = scanf("%c", &answer);
-    empty_stdin();
-
-
-    if (answer == 'n' || answer == 'N')
+    printf("Hello, Welcome to blackjack! would you like to start playing? 'yes' or 'no'\n");
+    
+    input = scanf("%s", answer);
+    if  (0 == strcmp(yesans, answer))
     {
-        gameState->outcomes = Quit;
-        return;
-    }
+        printf("Great! So you have $%u and the pot right now is $%u\n", gameState->cash, gameState->pot);
+        printf("How much would you like to bet? in multiplications of 10's\n");
+        input = scanf("%hu", &bet);
+        bet *= 10;
+        empty_stdin();
 
-    else
-
-    {
-        while (input == EOF || (answer != 'Y' && answer != 'y' && answer != 'N' && answer != 'n'))
-        {
-            printf("Invalid answer, Please try again\n");
-            scanf("%c", (&answer));
-            empty_stdin();
-        }
-    }
-
-    printf("Great! So you have $%u and the pot right now is $%u\n", gameState->cash, gameState->pot);
-
-    printf("How much would you like to bet? in multiplications of 10's\n");
-    input = scanf("%hu", &bet);
-     bet *= 10;
-
-
-    while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash)
+  while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash)
     {
         printf("Not the right amount, Please insert the value again\n");
         input = scanf("%hu", &bet);
@@ -153,11 +139,29 @@ void Pre_Game(Gamestate *gameState)
         empty_stdin();
     }
 
-    gameState->cash -= bet;
-    gameState->pot += bet;
 
-    printf("Your bet is %hu\n\n", bet);
+gameState->cash -= bet;
+gameState->pot += bet;
+printf("Your bet is %hu\n\n", bet);
+}
+    
+    else if (0 == strcmp(answer, noans))
+    {
+        gameState->outcomes = Quit;
+        return;
+    }
 
+    else
+    {
+        while(scanf("%s", answer) != strcmp(yesans, answer) || scanf("%s", answer) != strcmp(noans, answer))
+        {
+            printf("Invalid answer, You need to type in exactly the words 'yes' or 'no' \n");
+            scanf("%s", answer);
+            empty_stdin();
+        }
+    }
+    
+    
     gameState->outcomes = TBD;
 }
 
@@ -245,15 +249,17 @@ void HitOrStand(Gamestate *gameState)
             Cards_Add(&gameState->Player, (Cards_Draw(&gameState->Deck, cardpick)));
             PlayersValue = showhands(&gameState->Player, 1);
             DealersValue = showhands(&gameState->Dealer, 0);
+
+            empty_stdin();
         }
 
-        if (PlayersValue > 21)
+        if (PlayersValue > 21 || DealersValue == 21)
         {
             gameState->outcomes = Lose;
             return;
         }
 
-        if (PlayersValue == 21 || DealersValue > 21)
+        if (PlayersValue == 21)
         {
             gameState->outcomes = Blackjack;
             return;
@@ -261,6 +267,7 @@ void HitOrStand(Gamestate *gameState)
         else if (0 == strcmp(stand, input))
         {
             break;
+            empty_stdin();
         }
 
         else{
@@ -285,7 +292,6 @@ void HitOrStand(Gamestate *gameState)
     }
     if (DealersValue > 21)
     {
-        printf("Dealer lost and you've won!\n");
         gameState->outcomes = Win;
         return;
     }
