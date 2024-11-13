@@ -123,7 +123,6 @@ void Pre_Game(Gamestate *gameState)
     input = scanf("%s", answer);
     if (0 == strcmp(yesans, answer))
     {
-        empty_stdin();
         printf("Great! So you have $%u and the pot right now is $%u\n", gameState->cash, gameState->pot);
         printf("How much would you like to bet? in multiplications of 10's\n");
         input = scanf("%hu", &bet);
@@ -145,6 +144,7 @@ void Pre_Game(Gamestate *gameState)
 
     else if (0 == strcmp(answer, noans))
     {
+        //check//
         gameState->outcomes = Quit;
         return;
     }
@@ -155,6 +155,7 @@ void Pre_Game(Gamestate *gameState)
         while (scanf("%s", answer) != strcmp(yesans, answer) || scanf("%s", answer) != strcmp(noans, answer))
         {
             printf("Invalid answer, You need to type in exactly the words 'yes' or 'no' \n");
+            empty_stdin();
             scanf("%s", answer);
             empty_stdin();
         }
