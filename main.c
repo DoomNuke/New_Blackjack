@@ -21,8 +21,6 @@ const char Suites[SUITES][8] =
     {
         "Spades", "Diamond", "Hearts", "Clubs"};
 
-
-
 const uint8_t Total_Cards = RANKS * SUITES; // 52 Cards
 
 const char input;
@@ -35,7 +33,7 @@ void init_game(Gamestate *gameState);
 void Pre_Game(Gamestate *gameState);
 // Initializing the rounds with the starting values, 2 cards for each player - player & CPU
 void RoundInit(Gamestate *gameState);
-//Resetting the cards back
+// Resetting the cards back
 void ResetDeck(Gamestate *gameState);
 // The actual hit or stand
 void HitOrStand(Gamestate *gameState);
@@ -43,10 +41,10 @@ void HitOrStand(Gamestate *gameState);
 bool outcome(Gamestate *gameState);
 // A function that shows both player's and dealer's hands
 int8_t showhands(Card_List *hand, bool showhand);
-//Clearing the buffer 
+// Clearing the buffer
 void empty_stdin(void);
 
-//Additional Note, Wanted to include a delay func but since it works differently on Linux, decided not to
+// Additional Note, Wanted to include a delay func but since it works differently on Linux, decided not to
 
 int main()
 {
@@ -121,47 +119,47 @@ void Pre_Game(Gamestate *gameState)
     }
 
     printf("Hello, Welcome to blackjack! would you like to start playing? 'yes' or 'no'\n");
-    
+
     input = scanf("%s", answer);
-    if  (0 == strcmp(yesans, answer))
+    if (0 == strcmp(yesans, answer))
     {
+        empty_stdin();
         printf("Great! So you have $%u and the pot right now is $%u\n", gameState->cash, gameState->pot);
         printf("How much would you like to bet? in multiplications of 10's\n");
         input = scanf("%hu", &bet);
         bet *= 10;
         empty_stdin();
 
-  while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash)
-    {
-        printf("Not the right amount, Please insert the value again\n");
-        input = scanf("%hu", &bet);
-        bet *= 10;
-        empty_stdin();
+        while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash)
+        {
+            printf("Not the right amount, Please insert the value again\n");
+            input = scanf("%hu", &bet);
+            bet *= 10;
+            empty_stdin();
+        }
+
+        gameState->cash -= bet;
+        gameState->pot += bet;
+        printf("Your bet is %hu\n\n", bet);
     }
 
-
-gameState->cash -= bet;
-gameState->pot += bet;
-printf("Your bet is %hu\n\n", bet);
-}
-    
     else if (0 == strcmp(answer, noans))
     {
         gameState->outcomes = Quit;
         return;
     }
 
+
     else
     {
-        while(scanf("%s", answer) != strcmp(yesans, answer) || scanf("%s", answer) != strcmp(noans, answer))
+        while (scanf("%s", answer) != strcmp(yesans, answer) || scanf("%s", answer) != strcmp(noans, answer))
         {
             printf("Invalid answer, You need to type in exactly the words 'yes' or 'no' \n");
             scanf("%s", answer);
             empty_stdin();
         }
     }
-    
-    
+
     gameState->outcomes = TBD;
 }
 
@@ -216,7 +214,8 @@ void RoundInit(Gamestate *gameState)
 
 void ResetDeck(Gamestate *gameState)
 {
-     while(gameState->Player.length > 0){
+    while (gameState->Player.length > 0)
+    {
         Cards_Add(&gameState->Deck, Cards_Draw(&gameState->Player, 0));
     }
     while (gameState->Dealer.length > 0)
@@ -237,8 +236,8 @@ void HitOrStand(Gamestate *gameState)
     while (true)
     {
         printf("Would you like to hit or stand?\n");
-       scanf("%s", input);
-        if  (0 == strcmp(hit, input))
+        scanf("%s", input);
+        if (0 == strcmp(hit, input))
         {
             if (gameState->Deck.length == 0)
             {
@@ -270,8 +269,9 @@ void HitOrStand(Gamestate *gameState)
             empty_stdin();
         }
 
-        else{
-            while(scanf("%s", input) != strcmp(hit, input) || scanf("%s", input) != strcmp(stand, input))
+        else
+        {
+            while (scanf("%s", input) != strcmp(hit, input) || scanf("%s", input) != strcmp(stand, input))
             {
                 printf("Invalid answer, you need to type in 'hit' or 'stand' \n");
                 scanf("%s", input);
@@ -376,9 +376,8 @@ int8_t showhands(Card_List *hand, bool showhand)
         uint8_t suit = 0;
         uint8_t value = rank + 1;
 
-        
         aces += (value == 1);
-        
+
         total += value;
 
         while (suitb > 16)
@@ -397,11 +396,11 @@ int8_t showhands(Card_List *hand, bool showhand)
         }
         curr = curr->next;
     }
-      while (total < 13 && aces > 0)
-            {
-                total += 9;
-                aces--;
-            }
+    while (total < 13 && aces > 0)
+    {
+        total += 9;
+        aces--;
+    }
     printf("\n");
     if (showhand)
     {
@@ -418,5 +417,6 @@ int8_t showhands(Card_List *hand, bool showhand)
 void empty_stdin(void)
 {
     int c = getchar();
-    while (c != '\n' && c != EOF) c = getchar();
+    while (c != '\n' && c != EOF)
+        c = getchar();
 }
