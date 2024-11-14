@@ -105,7 +105,7 @@ void init_game(Gamestate *gameState)
 
 void Pre_Game(Gamestate *gameState)
 {
-    char answer[6];
+    char answer[4];
     const char *yesans = "yes";
     const char *noans = "no";
     int input = 0;
@@ -121,7 +121,7 @@ void Pre_Game(Gamestate *gameState)
     printf("Hello, Welcome to blackjack! would you like to start playing? 'yes' or 'no'\n");
     while (true)
     {
-        scanf("%s", answer);
+        scanf("%3s", answer);
         if (0 == strcmp(yesans, answer))
         {
             printf("Great! So you have $%u and the pot right now is $%u\n", gameState->cash, gameState->pot);
@@ -132,30 +132,29 @@ void Pre_Game(Gamestate *gameState)
             {
                 empty_stdin();
                 printf("Not the right amount, Please insert the value again\n");
-                input = scanf("%hu", &bet);
+                input = scanf("%2hu", &bet);
                 bet *= 10;
             }
             gameState->cash -= bet;
             gameState->pot += bet;
             printf("Your bet is %hu\n\n", bet);
-            break;
+            gameState->outcomes = TBD;
         }
 
         else if (0 == strcmp(answer, noans))
         {
             gameState->outcomes = Quit;
-            return;
+            break;
         }
-
+        //In the while block - Added else in order to not keep the scanning of the answer in the questioning of the starting game
         else
         {
             printf("Invalid answer, You need to type in exactly the words 'yes' or 'no' \n");
             empty_stdin();
-            scanf("%s", answer);
+            scanf("%3s", answer);
             empty_stdin();
         }
     }
-    gameState->outcomes = TBD;
 }
 
 void RoundInit(Gamestate *gameState)
@@ -232,7 +231,7 @@ void HitOrStand(Gamestate *gameState)
 
     while (true)
     {
-        scanf("%s", input);
+        scanf("%5s", input);
         if (0 == strcmp(hit, input))
         {
             if (gameState->Deck.length == 0)
@@ -269,7 +268,7 @@ void HitOrStand(Gamestate *gameState)
         {
             empty_stdin();
             printf("Invalid answer, you need to type in 'hit' or 'stand' \n");
-            scanf("%s", input);
+            scanf("%6s", input);
             empty_stdin();
         }
     }
