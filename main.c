@@ -119,40 +119,35 @@ void Pre_Game(Gamestate *gameState)
     }
 
     printf("Hello, Welcome to blackjack! would you like to start playing? 'yes' or 'no'\n");
-
-    input = scanf("%s", answer);
-    if (0 == strcmp(yesans, answer))
+    while (true)
     {
-        printf("Great! So you have $%u and the pot right now is $%u\n", gameState->cash, gameState->pot);
-        printf("How much would you like to bet? in multiplications of 10's\n");
-        input = scanf("%hu", &bet);
-        bet *= 10;
-        empty_stdin();
-
-        while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash)
+        scanf("%s", answer);
+        if (0 == strcmp(yesans, answer))
         {
-            printf("Not the right amount, Please insert the value again\n");
+            printf("Great! So you have $%u and the pot right now is $%u\n", gameState->cash, gameState->pot);
+            printf("How much would you like to bet? in multiplications of 10's\n");
             input = scanf("%hu", &bet);
-            bet *= 10;
-            empty_stdin();
+
+            while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash)
+            {
+                empty_stdin();
+                printf("Not the right amount, Please insert the value again\n");
+                input = scanf("%hu", &bet);
+                bet *= 10;
+            }
+            gameState->cash -= bet;
+            gameState->pot += bet;
+            printf("Your bet is %hu\n\n", bet);
+            break;
         }
 
-        gameState->cash -= bet;
-        gameState->pot += bet;
-        printf("Your bet is %hu\n\n", bet);
-    }
+        else if (0 == strcmp(answer, noans))
+        {
+            gameState->outcomes = Quit;
+            return;
+        }
 
-    else if (0 == strcmp(answer, noans))
-    {
-        //check//
-        gameState->outcomes = Quit;
-        return;
-    }
-
-
-    else
-    {
-        while (scanf("%s", answer) != strcmp(yesans, answer) || scanf("%s", answer) != strcmp(noans, answer))
+        else
         {
             printf("Invalid answer, You need to type in exactly the words 'yes' or 'no' \n");
             empty_stdin();
@@ -160,7 +155,6 @@ void Pre_Game(Gamestate *gameState)
             empty_stdin();
         }
     }
-
     gameState->outcomes = TBD;
 }
 
@@ -234,9 +228,10 @@ void HitOrStand(Gamestate *gameState)
     uint8_t PlayersValue = 0;
     uint8_t DealersValue = 0;
 
+    printf("Would you like to hit or stand?\n");
+
     while (true)
     {
-        printf("Would you like to hit or stand?\n");
         scanf("%s", input);
         if (0 == strcmp(hit, input))
         {
@@ -249,8 +244,6 @@ void HitOrStand(Gamestate *gameState)
             Cards_Add(&gameState->Player, (Cards_Draw(&gameState->Deck, cardpick)));
             PlayersValue = showhands(&gameState->Player, 1);
             DealersValue = showhands(&gameState->Dealer, 0);
-
-            empty_stdin();
         }
 
         if (PlayersValue > 21 || DealersValue == 21)
@@ -264,20 +257,20 @@ void HitOrStand(Gamestate *gameState)
             gameState->outcomes = Blackjack;
             return;
         }
+
         else if (0 == strcmp(stand, input))
         {
             break;
-            empty_stdin();
         }
+
+
 
         else
         {
-            while (scanf("%s", input) != strcmp(hit, input) || scanf("%s", input) != strcmp(stand, input))
-            {
-                printf("Invalid answer, you need to type in 'hit' or 'stand' \n");
-                scanf("%s", input);
-                empty_stdin();
-            }
+            empty_stdin();
+            printf("Invalid answer, you need to type in 'hit' or 'stand' \n");
+            scanf("%s", input);
+            empty_stdin();
         }
     }
 
