@@ -263,7 +263,6 @@ void HitOrStand(Gamestate *gameState)
 
         else
         {
-            empty_stdin();
             printf("Invalid answer, you need to type in 'hit' or 'stand' \n");
             scanf("%6s", input);
             empty_stdin();
