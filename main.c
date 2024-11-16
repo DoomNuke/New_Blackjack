@@ -79,7 +79,7 @@ int main()
 // Initializing all the members of the struct
 void init_game(Gamestate *gameState)
 {
-
+    gameState->outcomes = TBD;
     gameState->cash = 1000;
     gameState->pot = 0;
 
@@ -105,7 +105,7 @@ void init_game(Gamestate *gameState)
 
 void Pre_Game(Gamestate *gameState)
 {
-    char answer[4];
+    char answer[3];
     const char *yesans = "yes";
     const char *noans = "no";
     int input = 0;
@@ -123,7 +123,7 @@ void Pre_Game(Gamestate *gameState)
     {
         scanf("%3s", answer);
         empty_stdin();
-        if (0 == strcmp(yesans, answer))
+        if (0 == strcmp(answer, yesans))
         {
             printf("Great! So you have $%u and the pot right now is $%u\n", gameState->cash, gameState->pot);
             printf("How much would you like to bet? in multiplications of 10's\n");
@@ -263,6 +263,7 @@ void HitOrStand(Gamestate *gameState)
 
         else
         {
+            empty_stdin();
             printf("Invalid answer, you need to type in 'hit' or 'stand' \n");
             scanf("%6s", input);
             empty_stdin();
