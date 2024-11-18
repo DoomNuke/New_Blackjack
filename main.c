@@ -126,26 +126,15 @@ void Pre_Game(Gamestate *gameState)
         if (0 == strcmp(answer, yesans))
         {
             printf("Great! So you have $%u and the pot right now is $%u\n", gameState->cash, gameState->pot);
-            printf("How much would you like to bet? in multiplications of 10's\n");
-            input = scanf("%hu", &bet);
 
-            if (input < 10 && input >= 1)
+            do
             {
-                bet *= 10;
-            }
+                printf("How much would you like to bet? in multiplications of 10's\n");
+                input = scanf("%2hu", &bet);
+                empty_stdin();
+            } while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash);
 
-            else
-            {
-
-                do
-                {
-                    printf("Not the right amount, Please insert the value again\n");
-                    input = scanf("%2hu", &bet);
-                    empty_stdin();
-                    bet *= 10;
-                } while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash);
-            }
-
+            bet *= 10;
             gameState->cash -= bet;
             gameState->pot += bet;
             printf("Your bet is %hu\n\n", bet);
@@ -201,12 +190,11 @@ void RoundInit(Gamestate *gameState)
 
     if (Players_val == 21)
     {
-        printf("Congratulations!, Blackjack!\n");
         gameState->outcomes = Blackjack;
         return;
         // Round Loss Implementation prolly in enum
     }
-    else if (Players_val > 21 || Dealers_val == 21)
+    else if (Players_val >= 21 || Dealers_val == 21)
     {
         gameState->outcomes = Lose;
         return;
@@ -234,12 +222,13 @@ void HitOrStand(Gamestate *gameState)
     uint8_t PlayersValue = 0;
     uint8_t DealersValue = 0;
 
-    printf("Would you like to hit or stand?\n");
 
-    while (true)
+    do
     {
+        printf("Would you like to hit or stand?\n");
         scanf("%5s", input);
-        if (0 == strcmp(hit, input))
+        empty_stdin();
+        if (0 == strcmp(input, hit))
         {
             if (gameState->Deck.length == 0)
             {
@@ -252,30 +241,25 @@ void HitOrStand(Gamestate *gameState)
             DealersValue = showhands(&gameState->Dealer, 0);
         }
 
-        if (PlayersValue > 21 || DealersValue == 21)
-        {
-            gameState->outcomes = Lose;
-            return;
-        }
-
-        if (PlayersValue == 21)
-        {
-            gameState->outcomes = Blackjack;
-            return;
-        }
-
-        else if (0 == strcmp(stand, input))
+        else if (0 == strcmp(input, stand))
         {
             break;
         }
 
-        else
-        {
-            printf("Invalid answer, you need to type in 'hit' or 'stand' \n");
-            scanf("%6s", input);
-            empty_stdin();
-        }
+    } while ((0 != strcmp(input, hit) || (0 != strcmp(input, stand))) && (PlayersValue < 21));
+
+    if (PlayersValue > 21 || DealersValue == 21)
+    {
+        gameState->outcomes = Lose;
+        return;
     }
+
+   else if (PlayersValue == 21)
+    {
+        gameState->outcomes = Blackjack;
+        return;
+    }
+
 
     while (true)
     {
@@ -387,11 +371,11 @@ int8_t showhands(Card_List *hand, bool showhand)
 
         if (showhand || count == 0)
         {
-            printf(" - %s of %s", Ranks[rank], Suites[suit]);
+            printf(" - %s of %s\n", Ranks[rank], Suites[suit]);
         }
         else
         {
-            printf(" - ? of ?");
+            printf(" - ? of ?\n");
         }
         curr = curr->next;
         count++;
@@ -404,11 +388,11 @@ int8_t showhands(Card_List *hand, bool showhand)
     printf("\n");
     if (showhand)
     {
-        printf("Total is[%hu]\n", total);
+        printf("\t Total is[%hu]\n\n", total);
     }
     else
     {
-        printf("Total: ???\n\n");
+        printf("\t Total: ???\n");
     }
 
     return total;
