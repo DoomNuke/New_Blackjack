@@ -105,7 +105,7 @@ void init_game(Gamestate *gameState)
 
 void Pre_Game(Gamestate *gameState)
 {
-    char answer[3];
+    char answer[5];
     const char *yesans = "yes";
     const char *noans = "no";
     int input = 0;
