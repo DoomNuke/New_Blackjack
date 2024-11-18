@@ -130,7 +130,7 @@ void Pre_Game(Gamestate *gameState)
             do
             {
                 printf("How much would you like to bet? in multiplications of 10's\n");
-                input = scanf("%2hu", &bet);
+                input = scanf("%5hu", &bet);
                 empty_stdin();
             } while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash);
 
