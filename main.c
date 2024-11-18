@@ -121,7 +121,7 @@ void Pre_Game(Gamestate *gameState)
     printf("Hello, Welcome to blackjack! would you like to start playing? 'yes' or 'no'\n");
     while (true)
     {
-        scanf("%3s", answer);
+        scanf("%4s", answer);
         empty_stdin();
         if (0 == strcmp(answer, yesans))
         {
@@ -129,13 +129,23 @@ void Pre_Game(Gamestate *gameState)
             printf("How much would you like to bet? in multiplications of 10's\n");
             input = scanf("%hu", &bet);
 
-            while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash)
+            if (input < 10 && input >= 1)
             {
-                empty_stdin();
-                printf("Not the right amount, Please insert the value again\n");
-                input = scanf("%2hu", &bet);
                 bet *= 10;
             }
+
+            else
+            {
+
+                do
+                {
+                    printf("Not the right amount, Please insert the value again\n");
+                    input = scanf("%2hu", &bet);
+                    empty_stdin();
+                    bet *= 10;
+                } while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash);
+            }
+
             gameState->cash -= bet;
             gameState->pot += bet;
             printf("Your bet is %hu\n\n", bet);
@@ -148,9 +158,9 @@ void Pre_Game(Gamestate *gameState)
             gameState->outcomes = Quit;
             break;
         }
-        //In the while block - Added else in order to not keep the scanning of the answer in the questioning of the starting game
-    
-            printf("Invalid answer, You need to type in exactly the words 'yes' or 'no' \n");
+        // In the while block - Added else in order to not keep the scanning of the answer in the questioning of the starting game
+
+        printf("Invalid answer, You need to type in exactly the words 'yes' or 'no' \n");
     }
 }
 
@@ -259,11 +269,8 @@ void HitOrStand(Gamestate *gameState)
             break;
         }
 
-
-
         else
         {
-            empty_stdin();
             printf("Invalid answer, you need to type in 'hit' or 'stand' \n");
             scanf("%6s", input);
             empty_stdin();
@@ -319,6 +326,7 @@ bool outcome(Gamestate *gameState)
         winning = gameState->pot * 2.5;
         gameState->cash += winning;
         gameState->pot = 0;
+        printf("Congratulations! You hit a blackjack\n");
         printf("You've won $%u\n\n", winning);
         break;
 
@@ -356,6 +364,7 @@ int8_t showhands(Card_List *hand, bool showhand)
 
     uint8_t total = 0;
     uint8_t aces = 0;
+    uint8_t count = 0;
 
     Cards *curr = hand->head;
     while (curr != NULL)
@@ -376,7 +385,7 @@ int8_t showhands(Card_List *hand, bool showhand)
             suit++;
         }
 
-        if (showhand)
+        if (showhand || count == 0)
         {
             printf(" - %s of %s", Ranks[rank], Suites[suit]);
         }
@@ -385,6 +394,7 @@ int8_t showhands(Card_List *hand, bool showhand)
             printf(" - ? of ?");
         }
         curr = curr->next;
+        count++;
     }
     while (total < 13 && aces > 0)
     {
