@@ -130,9 +130,9 @@ void Pre_Game(Gamestate *gameState)
             do
             {
                 printf("How much would you like to bet? in multiplications of 10's\n");
-                input = scanf("%5hu", &bet);
+                input = scanf("%3hu", &bet);
                 empty_stdin();
-            } while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash);
+            } while (input == 0 || (bet < 10 && bet + gameState->pot <= 0) || bet > gameState->cash || bet*10 > gameState->cash);
 
             bet *= 10;
             gameState->cash -= bet;
@@ -170,6 +170,7 @@ void RoundInit(Gamestate *gameState)
         DrawInd = rand() % gameState->Deck.length;
         Cards_Add(&gameState->Player, (Cards_Draw(&gameState->Deck, DrawInd)));
     }
+    printf("Players Hand:\n");
     Players_val = showhands(&gameState->Player, true);
 
     // Drawing cards for the CPU
@@ -184,6 +185,7 @@ void RoundInit(Gamestate *gameState)
         Cards_Add(&gameState->Dealer, (Cards_Draw(&gameState->Deck, DrawInd)));
     }
 
+    printf("Dealers Hand:\n");
     Dealers_val = showhands(&gameState->Dealer, false);
 
     // Showing the players hand
@@ -222,7 +224,6 @@ void HitOrStand(Gamestate *gameState)
     uint8_t PlayersValue = 0;
     uint8_t DealersValue = 0;
 
-
     do
     {
         printf("Would you like to hit or stand?\n");
@@ -237,7 +238,9 @@ void HitOrStand(Gamestate *gameState)
             }
             cardpick = rand() % gameState->Deck.length;
             Cards_Add(&gameState->Player, (Cards_Draw(&gameState->Deck, cardpick)));
+            printf("Players Hand:\n");
             PlayersValue = showhands(&gameState->Player, 1);
+            printf("Dealers Hand:\n");
             DealersValue = showhands(&gameState->Dealer, 0);
         }
 
@@ -254,17 +257,18 @@ void HitOrStand(Gamestate *gameState)
         return;
     }
 
-   else if (PlayersValue == 21)
+    else if (PlayersValue == 21)
     {
         gameState->outcomes = Blackjack;
         return;
     }
 
-
     while (true)
     {
+        printf("Players Hand:\n");
         PlayersValue = showhands(&gameState->Player, 1);
-        printf("Dealer Draws a card\n");
+        printf("- Dealer Draws a card -\n\n");
+        printf("Dealers Hand:\n\n");
         DealersValue = showhands(&gameState->Dealer, 1);
         if (DealersValue >= 17 || DealersValue > PlayersValue)
             break;
@@ -274,6 +278,11 @@ void HitOrStand(Gamestate *gameState)
     if (DealersValue > 21)
     {
         gameState->outcomes = Win;
+        return;
+    }
+    if (DealersValue == 21)
+    {
+        gameState->outcomes = Lose;
         return;
     }
     else if (DealersValue > PlayersValue)
