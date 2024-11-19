@@ -270,6 +270,10 @@ void HitOrStand(Gamestate *gameState)
         printf("- Dealer Draws a card -\n\n");
         printf("Dealers Hand:\n\n");
         DealersValue = showhands(&gameState->Dealer, 1);
+        
+        printf("Press enter to continue\n");
+        empty_stdin();
+        
         if (DealersValue >= 17 || DealersValue > PlayersValue)
             break;
         cardpick = rand() % gameState->Deck.length;
